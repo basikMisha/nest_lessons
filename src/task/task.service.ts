@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -17,7 +18,7 @@ export class TaskService {
     return this.tasks;
   }
 
-  getTaskById(id: string): ITask {
+  getTaskById(id: number): ITask {
     const task = this.tasks.find((task) => task.id === id);
     if (!task) {
       // throw new HttpException('Task is not found', HttpStatus.NOT_FOUND);
@@ -27,9 +28,17 @@ export class TaskService {
     return task;
   }
 
-  createTask({ task, tags, status }: CreateTaskDTO): ITask {
-    const newTask = new Task(task, tags, status);
+  createTask({ task, email, tags, status }: CreateTaskDTO): ITask {
+    const newTask = new Task(task, email, tags, status);
     this.tasks.push(newTask);
     return newTask;
+  }
+
+  getTasksByEmail(email: string): ITask[] {
+    const tasks = this.tasks.filter((task) => task.email === email);
+    if (!tasks || tasks.length === 0) {
+      throw new BadRequestException('Tasks not found');
+    }
+    return tasks;
   }
 }

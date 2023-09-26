@@ -8,31 +8,37 @@ import {
   ValidationPipe,
   UseFilters,
   HttpException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ITask } from './task.interface';
 import { TaskService } from './task.service';
 import { CreateTaskDTO } from './dto/create-task.dto';
-import { AllExceptionsFilter } from '@src/exception-filters/exception.filter';
+import { EmailPipe } from './pipes/email.pipe';
 
 @Controller('task')
 export class TaskController {
-  constructor(private testService: TaskService) {}
+  constructor(private taskService: TaskService) {}
 
   @Get()
   getTasks(): ITask[] {
     // throw new HttpException('Some error', 404);
-    throw new Error('error');
-    return this.testService.getTasks();
+    // throw new Error('error');
+    return this.taskService.getTasks();
   }
 
   @Get(':id')
-  getTaskById(@Param('id') id: string): ITask {
-    return this.testService.getTaskById(id);
+  getTaskById(@Param('id', ParseIntPipe) id: number): ITask {
+    return this.taskService.getTaskById(id);
   }
 
   @UsePipes(new ValidationPipe())
   @Post()
   createTask(@Body() task: CreateTaskDTO): ITask {
-    return this.testService.createTask(task);
+    return this.taskService.createTask(task);
+  }
+
+  @Get('email/:email')
+  getTaskByEmail(@Param('email', EmailPipe) email: string): ITask[] {
+    return this.taskService.getTasksByEmail(email);
   }
 }

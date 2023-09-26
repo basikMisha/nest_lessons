@@ -1,5 +1,6 @@
 import {
   ArrayNotEmpty,
+  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -14,9 +15,13 @@ export class CreateTaskDTO {
 
   @ArrayNotEmpty({ message: 'Необходимо указать теги' })
   @IsString({ each: true, message: 'Теги должны быть строчными' })
-  tags?: string[];
+  tags: string[];
 
   @IsOptional()
   @IsEnum(Status, { message: 'Не верный тип статуса' })
-  status?: Status;
+  status: Status;
+
+  @IsOptional()
+  @IsEmail({}, { message: 'Некорректная почта' })
+  email: string;
 }
